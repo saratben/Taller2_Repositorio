@@ -25,19 +25,28 @@ summary(sum_ingresos)
 train_hogares <- left_join(train_hogares, sum_ingresos)
 colnames(train_hogares)
 
-# Cálculo pobreza
-table(train_hogares$Pobre)
-
-train_hogares <- train_hogares %>% mutate(Pobre_hand = ifelse(Ingpcug < Lp, 1, 0))
-table(train_hogares$Pobre, train_hogares$Pobre_hand)
-
 # Arreglar bases de datos 
-train_hogares <- rename(train_hogares, c(cuartos="P5000", vivienda="P5090", 
-                                         tot_personas="Nper", personas_gasto="Npersug"))
+train_hogares <- rename(train_hogares, c(Cuartos=P5000, Vivienda=P5090, 
+                                         Tot_personas=Nper, Personas_gasto=Npersug))
 
-test_hogares <- rename(test_hogares, c(cuartos="P5000", vivienda="P5090", 
-                                         tot_personas="Nper", personas_gasto="Npersug"))
+test_hogares <- rename(test_hogares, c(Cuartos=P5000, Vivienda=P5090, 
+                                         Tot_personas=Nper, Personas_gasto=Npersug))
 
-train_hogares <- select(train_hogares, cuartos, vivienda, tot_personas, personas_gasto, 
-                       Lp, Pobre, Depto)
+"train_hogares <- select(train_hogares, id, Clase, Dominio, Cuartos, Vivienda, Tot_personas, 
+                        Personas_gasto, Lp, Pobre, Depto)
 
+test_hogares <- select(test_hogares, id, Clase, Dominio, Cuartos, Vivienda, Tot_personas, 
+                       Personas_gasto, Lp, Depto)"
+
+# Cambio de missing values por ceros 
+train1 <- train_hogares
+test1 <- test_hogares
+
+train1[is.na(train1)] = 0
+test1[is.na(test1)] = 0
+
+# Cambio de missing values por la media 
+train2 <- train_hogares
+test2 <- test_hogares
+
+train2 <- train2 %>% mutate_if(is.numeric, funs(replace_na(., mean(., na.rm = TRUE))))
