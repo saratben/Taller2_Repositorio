@@ -12,6 +12,11 @@ train_personas <- read.csv("C:/Users/Sofia/OneDrive - Universidad de los Andes/8
 test_hogares <- read.csv("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 2/test_hogares.csv")
 test_personas <- read.csv("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 2/test_personas.csv")
 
+#saveRDS(train_hogares, "stores/train_hogares.rds")
+#saveRDS(train_personas, "train_personas.rds")
+#saveRDS(test_hogares, "test_hogares.rds")
+#saveRDS(test_personas, "test_personas.rds")
+
 # Unir bases. Sacar valores individuales a grupal para ingreso, estrato, educación y horas trabajadas
 colnames(train_hogares)
 colnames(train_personas)
@@ -43,11 +48,15 @@ test_hogares <- select(test_hogares, id, Clase, Dominio, Cuartos, Vivienda, Tot_
                        Personas_gasto, Lp, Depto)"
 
 # Cambio de missing values por ceros 
+setwd("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 2")
 train1 <- train_hogares
 test1 <- test_hogares
 
 train1[is.na(train1)] = 0
 test1[is.na(test1)] = 0
+
+saveRDS(train1, "train1.rds")
+saveRDS(test1, "test1.rds")
 
 # Cambio de missing values por la media 
 train2 <- train_hogares
@@ -59,6 +68,8 @@ for (x in columnas) {
   train2[is.na(train2[,x]), x] <- media[x]
 }
 
+saveRDS(train2, "train2.rds")
+
 test2 <- test_hogares
 columnas <- which(sapply(test2, is.numeric))
 media <- rep(NA, ncol(test2))
@@ -67,6 +78,9 @@ for (x in columnas) {
   test2[is.na(test2[,x]), x] <- media[x]
 }
 
+saveRDS(test2, "test2.rds")
+
 # Cambio de missing values por el vecino más cercano KNN
 test3 <- kNN(test_hogares, variable=c("P5100", "P5130", "P5140"), k = 6)
-train3 <- kNN(train_hogares, variable=c("P5100", "P5130", "P5140"), k = 4)
+
+train3 <- kNN(train_hogares, variable=c("P5100", "P5130", "P5140"), k = 6)
