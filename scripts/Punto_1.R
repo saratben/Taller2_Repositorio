@@ -12,18 +12,21 @@ train_personas <- read.csv("C:/Users/Sofia/OneDrive - Universidad de los Andes/8
 test_hogares <- read.csv("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 2/test_hogares.csv")
 test_personas <- read.csv("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 2/test_personas.csv")
 
-# Unir bases. Suma ingresos individuales del hogar
+# Unir bases. Sacar valores individuales a grupal para ingreso, estrato, educación y horas trabajadas
 colnames(train_hogares)
 colnames(train_personas)
 
-sum_ingresos <- train_personas %>% 
-                group_by(id) %>% 
-                summarize(Ingtot_hogar = sum(Ingtot, na.rm = TRUE))
+datos_hogar <- train_personas %>% 
+               group_by(id) %>% 
+               summarize(Ingtot_hogar = sum(Ingtot, na.rm = TRUE), 
+                         Estrato_hogar = mean(Estrato1, na.rm = TRUE), 
+                         Educacion_hogar = mean(P6210, na.rm = TRUE), 
+                         Salud_hogar = mean(P6100, na.rm = TRUE), 
+                         Hrs_trabajo_hogar = mean(P6800, na.rm = TRUE))
 
-summary(sum_ingresos)
+# Unir variables ponderadas de individuos con la base de datos de hogares
+train_hogares<-left_join(train_hogares,datos_hogar)
 
-# Unir variable ingreso total con la base de datos de hogares
-train_hogares <- left_join(train_hogares, sum_ingresos)
 colnames(train_hogares)
 
 # Arreglar bases de datos 
