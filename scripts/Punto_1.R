@@ -3,11 +3,12 @@ rm(list = ls())
 
 # Cargar paquetes
 require("pacman")
-p_load("tidyverse")
+p_load("tidyverse", "dplyr", "VIM")
 
 # cargar bases de datos
 train_hogares <- read.csv("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 2/train_hogares.csv")
 train_personas <- read.csv("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 2/train_personas.csv")
+
 test_hogares <- read.csv("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 2/test_hogares.csv")
 test_personas <- read.csv("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 2/test_personas.csv")
 
@@ -47,6 +48,22 @@ test1[is.na(test1)] = 0
 
 # Cambio de missing values por la media 
 train2 <- train_hogares
-test2 <- test_hogares
 
-train2 <- train2 %>% mutate_if(is.numeric, funs(replace_na(., mean(., na.rm = TRUE))))
+columnas <- which(sapply(train2, is.numeric))
+media <- rep(NA, ncol(train2))
+media[columnas] <- colMeans(train2[, columnas], na.rm = TRUE)
+for (x in columnas) {
+  train2[is.na(train2[,x]), x] <- media[x]
+}
+
+test2 <- test_hogares
+columnas <- which(sapply(test2, is.numeric))
+media <- rep(NA, ncol(test2))
+media[columnas] <- colMeans(test2[, columnas], na.rm = TRUE)
+for (x in columnas) {
+  test2[is.na(test2[,x]), x] <- media[x]
+}
+
+# Cambio de missing values por el vecino más cercano KNN
+test3 <- kNN(test_hogares, variable=c("P5100", "P5130", "P5140"), k = 6)
+train3 <- kNN(train_hogares, variable=c("P5100", "P5130", "P5140"), k = 4)
