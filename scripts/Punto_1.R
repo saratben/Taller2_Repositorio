@@ -65,7 +65,7 @@ train2 <- train2 %>% mutate(across(c(P5100, P5130, P5140, Salud_hogar, Hrs_traba
 # saveRDS(train2, "train2.rds")
 
 test2 <- test_hogares
-test2 <- test2 %>% mutate(across(c(P5100, P5130, P5140, Salud_hogar, Hrs_trabajo_hogar ), ~replace_na(., mean(., na.rm = TRUE))))
+test2 <- test2 %>% mutate(across(c(P5100, P5130, P5140), ~replace_na(., mean(., na.rm = TRUE))))
 
 # saveRDS(test2, "test2.rds")
 
@@ -73,10 +73,10 @@ test2 <- test2 %>% mutate(across(c(P5100, P5130, P5140, Salud_hogar, Hrs_trabajo
 train3 <- train_hogares
 train3 <- train3 %>% mutate(across(where(is.numeric), ~replace_na(., median(., na.rm = TRUE))))
 
-saveRDS(train3, "train3.rds")
+# saveRDS(train3, "train3.rds")
 
 test3 <- test_hogares
 test3 <- test3 %>% mutate(across(where(is.numeric), ~replace_na(., median(., na.rm = TRUE))))
 
-saveRDS(test3, "test3.rds")
+# saveRDS(test3, "test3.rds")
 
