@@ -25,7 +25,7 @@ ctrl<- trainControl(method = "cv",
                     savePredictions = T)
 
 #creamos el bosque enfocado en la accuracy
-forest <- train(Pobre ~ Educacion_hogar+Salud_hogar+Hrs_trabajo_hogar, w
+forest <- train(Pobre ~ Educacion_hogar+Salud_hogar+Hrs_trabajo_hogar, 
                 data = train2, 
                 method = "rf",
                 trControl = ctrl,
