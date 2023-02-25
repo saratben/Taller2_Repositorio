@@ -21,18 +21,26 @@ test_personas <- read.csv("C:/Users/Sofia/OneDrive - Universidad de los Andes/8.
 colnames(train_hogares)
 colnames(train_personas)
 
-datos_hogar <- train_personas %>% 
-               group_by(id) %>% 
-               summarize(Ingtot_hogar = sum(Ingtot, na.rm = TRUE), 
-                         Estrato_hogar = mean(Estrato1, na.rm = TRUE), 
-                         Educacion_hogar = mean(P6210, na.rm = TRUE), 
-                         Salud_hogar = mean(P6100, na.rm = TRUE), 
-                         Hrs_trabajo_hogar = mean(P6800, na.rm = TRUE))
+datos_train_hogar <- train_personas %>% 
+                     group_by(id) %>% 
+                     summarize(Ingtot_hogar = sum(Ingtot, na.rm = TRUE), 
+                               Estrato_hogar = mean(Estrato1, na.rm = TRUE), 
+                               Educacion_hogar = mean(P6210, na.rm = TRUE), 
+                               Salud_hogar = mean(P6100, na.rm = TRUE), 
+                               Hrs_trabajo_hogar = mean(P6800, na.rm = TRUE))
+
+datos_test_hogar <- test_personas %>% 
+                    group_by(id) %>% 
+                    summarize(Educacion_hogar = mean(P6210, na.rm = TRUE), 
+                              Salud_hogar = mean(P6100, na.rm = TRUE), 
+                              Hrs_trabajo_hogar = mean(P6800, na.rm = TRUE))
 
 # Unir variables ponderadas de individuos con la base de datos de hogares
-train_hogares <- left_join(train_hogares,datos_hogar)
+train_hogares <- left_join(train_hogares,datos_train_hogar)
+test_hogares <- left_join(test_hogares,datos_test_hogar)
 
 colnames(train_hogares)
+colnames(test_hogares)
 
 # Arreglar bases de datos 
 train_hogares <- rename(train_hogares, c(Cuartos=P5000, Vivienda=P5090, 
