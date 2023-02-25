@@ -3,7 +3,7 @@ rm(list = ls())
 
 # Cargar paquetes
 require("pacman")
-p_load("tidyverse", "dplyr", "VIM")
+p_load("tidyverse", "dplyr")
 
 # cargar bases de datos
 train_hogares <- read.csv("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 2/train_hogares.csv")
@@ -30,7 +30,7 @@ datos_hogar <- train_personas %>%
                          Hrs_trabajo_hogar = mean(P6800, na.rm = TRUE))
 
 # Unir variables ponderadas de individuos con la base de datos de hogares
-train_hogares<-left_join(train_hogares,datos_hogar)
+train_hogares <- left_join(train_hogares,datos_hogar)
 
 colnames(train_hogares)
 
@@ -48,39 +48,35 @@ test_hogares <- select(test_hogares, id, Clase, Dominio, Cuartos, Vivienda, Tot_
                        Personas_gasto, Lp, Depto)"
 
 # Cambio de missing values por ceros 
-setwd("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 2")
+# setwd("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 2")
 train1 <- train_hogares
 test1 <- test_hogares
 
 train1[is.na(train1)] = 0
 test1[is.na(test1)] = 0
 
-saveRDS(train1, "train1.rds")
-saveRDS(test1, "test1.rds")
+# saveRDS(train1, "train1.rds")
+# saveRDS(test1, "test1.rds")
 
 # Cambio de missing values por la media 
 train2 <- train_hogares
+train2 <- train2 %>% mutate(across(c(P5100, P5130, P5140, Salud_hogar, Hrs_trabajo_hogar ), ~replace_na(., mean(., na.rm = TRUE))))
 
-columnas <- which(sapply(train2, is.numeric))
-media <- rep(NA, ncol(train2))
-media[columnas] <- colMeans(train2[, columnas], na.rm = TRUE)
-for (x in columnas) {
-  train2[is.na(train2[,x]), x] <- media[x]
-}
-
-saveRDS(train2, "train2.rds")
+# saveRDS(train2, "train2.rds")
 
 test2 <- test_hogares
-columnas <- which(sapply(test2, is.numeric))
-media <- rep(NA, ncol(test2))
-media[columnas] <- colMeans(test2[, columnas], na.rm = TRUE)
-for (x in columnas) {
-  test2[is.na(test2[,x]), x] <- media[x]
-}
+test2 <- test2 %>% mutate(across(c(P5100, P5130, P5140, Salud_hogar, Hrs_trabajo_hogar ), ~replace_na(., mean(., na.rm = TRUE))))
 
-saveRDS(test2, "test2.rds")
+# saveRDS(test2, "test2.rds")
 
-# Cambio de missing values por el vecino más cercano KNN
-test3 <- kNN(test_hogares, variable=c("P5100", "P5130", "P5140"), k = 6)
+# Cambio de missing values por la mediana 
+train3 <- train_hogares
+train3 <- train3 %>% mutate(across(where(is.numeric), ~replace_na(., median(., na.rm = TRUE))))
 
-train3 <- kNN(train_hogares, variable=c("P5100", "P5130", "P5140"), k = 6)
+saveRDS(train3, "train3.rds")
+
+test3 <- test_hogares
+test3 <- test3 %>% mutate(across(where(is.numeric), ~replace_na(., median(., na.rm = TRUE))))
+
+saveRDS(test3, "test3.rds")
+
