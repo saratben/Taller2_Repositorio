@@ -1,3 +1,5 @@
+# setwd("C:/Users/WIN/OneDrive/Documentos/LUIS/Octavo semestre/Machine-Learning/Taller 2")
+
 ### Predecir con un Random forest sencillo.
 
 #cargamos los modelos
@@ -11,6 +13,8 @@ datos_hogar_test <- test_personas %>%
             Salud_hogar = mean(P6100, na.rm = TRUE), 
             Hrs_trabajo_hogar = mean(P6800, na.rm = TRUE))
 test2<-left_join(test2,datos_hogar_test)
+test2 <- test2 %>% mutate(across(c(Salud_hogar, Hrs_trabajo_hogar), ~replace_na(., mean(., na.rm = TRUE))))
+
 
 #ponemos la variable a predecir como factor
 train2<-train2 %>% mutate(Pobre=factor(Pobre,levels=c(0,1),labels=c("No","Si")))         
@@ -25,7 +29,7 @@ ctrl<- trainControl(method = "cv",
                     savePredictions = T)
 
 #creamos el bosque enfocado en la accuracy
-forest <- train(Pobre ~ Educacion_hogar+Salud_hogar+Hrs_trabajo_hogar, w
+forest <- train(Pobre ~ Educacion_hogar+Salud_hogar+Hrs_trabajo_hogar, 
                 data = train2, 
                 method = "rf",
                 trControl = ctrl,
@@ -33,5 +37,13 @@ forest <- train(Pobre ~ Educacion_hogar+Salud_hogar+Hrs_trabajo_hogar, w
 )   
 
 #predecimos 
-pred<-predict(forest,newdata = test2, type = "raw")
+RF_pred2<-predict(forest,newdata = test2)
+head(RF_pred)
+summary(RF_pred2)
+
+
+#guardamos la base con los predichos
+Pred_RF_sencillo <- data.frame('id' = test2$id, 'Probre' = RF_pred2)
+write.csv(Pred_RF_sencillo, 'Pred_RF_sencillo.csv')
+
 
