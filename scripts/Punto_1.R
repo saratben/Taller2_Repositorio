@@ -6,11 +6,15 @@ require("pacman")
 p_load("tidyverse", "dplyr")
 
 # cargar bases de datos
-train_hogares <- read.csv("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 2/train_hogares.csv")
-train_personas <- read.csv("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 2/train_personas.csv")
+train_hogares <- readRDS(url("https://github.com/saratben/Taller2_Repositorio/raw/main/stores/train_hogares.rds?raw=true"))
+test_hogares <- readRDS(url("https://github.com/saratben/Taller2_Repositorio/blob/main/stores/test_hogares.rds?raw=true"))
+train_personas <- readRDS(url("https://github.com/saratben/Taller2_Repositorio/blob/main/stores/train_personas.rds?raw=true"))
+test_personas <- readRDS(url("https://github.com/saratben/Taller2_Repositorio/blob/main/stores/test_personas.rds?raw=true"))
 
-test_hogares <- read.csv("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 2/test_hogares.csv")
-test_personas <- read.csv("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 2/test_personas.csv")
+#train_hogares <- read.csv("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 2/train_hogares.csv")
+#train_personas <- read.csv("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 2/train_personas.csv")
+#test_hogares <- read.csv("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 2/test_hogares.csv")
+#test_personas <- read.csv("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 2/test_personas.csv")
 
 #saveRDS(train_hogares, "stores/train_hogares.rds")
 #saveRDS(train_personas, "train_personas.rds")
@@ -56,35 +60,35 @@ test_hogares <- select(test_hogares, id, Clase, Dominio, Cuartos, Vivienda, Tot_
                        Personas_gasto, Lp, Depto)"
 
 # Cambio de missing values por ceros 
-# setwd("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 2")
+#setwd("C:/Users/Sofia/OneDrive - Universidad de los Andes/8. Octavo Semestre/Big Data y Machine Learning/Talleres/Taller 2")
 train1 <- train_hogares
 test1 <- test_hogares
 
 train1[is.na(train1)] = 0
 test1[is.na(test1)] = 0
 
-# saveRDS(train1, "train1.rds")
-# saveRDS(test1, "test1.rds")
+#saveRDS(train1, "train1.rds")
+#saveRDS(test1, "test1.rds")
 
 # Cambio de missing values por la media 
 train2 <- train_hogares
 train2 <- train2 %>% mutate(across(c(P5100, P5130, P5140, Salud_hogar, Hrs_trabajo_hogar ), ~replace_na(., mean(., na.rm = TRUE))))
 
-# saveRDS(train2, "train2.rds")
+#saveRDS(train2, "train2.rds")
 
 test2 <- test_hogares
 test2 <- test2 %>% mutate(across(c(P5100, P5130, P5140), ~replace_na(., mean(., na.rm = TRUE))))
 
-# saveRDS(test2, "test2.rds")
+#saveRDS(test2, "test2.rds")
 
 # Cambio de missing values por la mediana 
 train3 <- train_hogares
 train3 <- train3 %>% mutate(across(where(is.numeric), ~replace_na(., median(., na.rm = TRUE))))
 
-# saveRDS(train3, "train3.rds")
+#saveRDS(train3, "train3.rds")
 
 test3 <- test_hogares
 test3 <- test3 %>% mutate(across(where(is.numeric), ~replace_na(., median(., na.rm = TRUE))))
 
-# saveRDS(test3, "test3.rds")
+#saveRDS(test3, "test3.rds")
 
