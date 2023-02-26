@@ -171,6 +171,7 @@ acc_n2<- Accuracy(y_pred=y_probn2, y_true=train1$Pobre)
 acc_n2
 #0.7997696
 
+
 modelo3n <- train(Ingtotug ~ arriendo_tamano + valor_arriendo,
                   data= train1,
                   method = "glm")
@@ -190,6 +191,64 @@ y_probn4 <- as.numeric(y_hatn4 < 289878.2)
 acc_n4<- Accuracy(y_pred=y_probn4, y_true=train1$Pobre)
 acc_n4
 #0.799806
+
+#MODELO CON RIDGE
+
+y<- train1$Ingtotug
+x <- data.matrix(train1[, c("valor_arriendo", "Tot_personas", "arriendo_tamano", "cuartos_pc")])
+library(glmnet)
+mod1ridge <- glmnet(x,y, alpha=0)
+
+#k-fold cross validation 
+cv_mod <- cv.glmnet(x,y, alpha=0)
+mejor_lambda <- cv_mod$lambda.min
+mejor_lambda
+#49277.18
+plot(cv_mod)
+
+mod1ridgebest <- glmnet(x, y, alpha=0, lambda=mejor_lambda)
+y_hatr1<- predict(mod1ridgebest, s=mejor_lambda, newx= x)
+y_probr1 <- as.numeric(y_hatr1 < 289878.2)
+acc_r1<- Accuracy(y_pred=y_probr1, y_true=train1$Pobre)
+acc_r1
+#0.7998
+
+#MODELO CON RIDGE Y OVERSAMPLING
+yup<- train1_up$Ingtotug
+xup <- data.matrix(train1_up[, c("valor_arriendo", "Tot_personas", "arriendo_tamano", "cuartos_pc")])
+
+mod2ridge <- glmnet(xup,yup, alpha=0)
+
+#k-fold cross validation 
+cv_mod <- cv.glmnet(xup,yup, alpha=0)
+mejor_lambdaup <- cv_mod$lambda.min
+mejor_lambdaup
+#18009.26
+
+mod2ridgebest <- glmnet(xup, yup, alpha=0, lambda=mejor_lambdaup)
+y_hatr2<- predict(mod2ridgebest, s=mejor_lambdaup, newx= xup)
+y_probr2 <- as.numeric(y_hatr2 < 289878.2)
+acc_r2<- Accuracy(y_pred=y_probr2, y_true=train1_up$Pobre)
+acc_r2
+# 0.5000303
+
+#MODELO LASSO 
+y<- train1$Ingtotug
+x <- data.matrix(train1[, c("valor_arriendo", "Tot_personas", "arriendo_tamano", "cuartos_pc")])
+mod1lasso <- glmnet(x,y, alpha=1)
+
+#k-fold cross validation 
+cv_mod <- cv.glmnet(x,y, alpha=1)
+mejor_lambdal <- cv_mod$lambda.min
+mejor_lambdal
+#4285.878
+
+mod1lassobest <- glmnet(x, y, alpha=1, lambda=mejor_lambdal)
+y_hatl1<- predict(mod1lassobest, s=mejor_lambdal, newx= x)
+y_probl1 <- as.numeric(y_hatl1 < 289878.2)
+acc_l1<- Accuracy(y_pred=y_probl1, y_true=train1$Pobre)
+acc_l1
+#0.7998
 
 
 
