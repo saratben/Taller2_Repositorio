@@ -36,6 +36,7 @@ forest <- train(Pobre ~ Educacion_hogar+Salud_hogar+Hrs_trabajo_hogar,
                 metric="Accuracy",
 )   
 
+forest
 #predecimos 
 RF_pred2<-predict(forest,newdata = test2)
 head(RF_pred)
