@@ -1,4 +1,8 @@
 ### Taller 2
+### Clean the workspace -----------------------------------------------------
+rm(list=ls())
+cat("\014")
+local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; options(repos=r)}) #set repo
 rm(list = ls())
 
 # Cargar paquetes
