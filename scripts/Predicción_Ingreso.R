@@ -14,19 +14,21 @@ train1 <- train1 %>% mutate(valor_arriendo = P5130+P5140)
 #train3 <- train3 %>% mutate(valor_arriendo = P5130+P5140)
 
 #Planteamos diferentes modelos de regresión para predecir el salario
-train1 <- train1 %>% mutate(Ingtotug = Ingtotug+1)
+
+#Creamos las variables necesarias
+
+#Cuartos per cápita
 train1 <- train1 %>% mutate(cuartos_pc = Cuartos/Tot_personas)
+#Valor de arriendo entre el número de cuartos
 train1 <- train1 %>% mutate(arriendo_tamano = valor_arriendo/Cuartos)
-#train1 <- train1 %>% mutate(log_ingreso = log10(Ingtotug))
 
 test1 <- test1 %>% mutate(cuartos_pc = Cuartos/Tot_personas)
 test1 <- test1 %>% mutate(arriendo_tamano = valor_arriendo/Cuartos)
 
 modelo1 <- lm(Ingtotug ~ valor_arriendo + Tot_personas, data= train1)
 modelo2 <-  lm(Ingtotug ~ valor_arriendo*Tot_personas + valor_arriendo, data= train1)
-modelo3 <-  lm(Ingtotug ~ valor_arriendo*Tot_personas + valor_arriendo + cuartos_pc, data= train1)
-modelo4 <-  lm(Ingtotug ~ valor_arriendo*Tot_personas + valor_arriendo + arriendo_tamano, data= train1)
-modelo5 <-  lm(Ingtotug ~  valor_arriendo + arriendo_tamano, data= train1)
+modelo3 <-  lm(Ingtotug ~ valor_arriendo*Tot_personas + valor_arriendo + arriendo_tamano, data= train1)
+modelo4 <-  lm(Ingtotug ~  valor_arriendo + arriendo_tamano, data= train1)
 stargazer( modelo1, modelo2, modelo3, modelo4, modelo5, type="text")
 
 
@@ -147,5 +149,47 @@ y_probd4 <- as.numeric(y_hatd4 < 289878.2)
 acc_d4<- Accuracy(y_pred=y_probd4, y_true=train1_d$Pobre)
 acc_d4
 # 0.5
+
+#MODELOS DE PRUEBA SIN REMUESTREO
+modelo1n <- train(Ingtotug ~ valor_arriendo + Tot_personas,
+                  data= train1,
+                  method = "glm")
+y_hatn1<- predict(modelo1n, train1)
+y_probn1 <- as.numeric(y_hatn1 < 289878.2)
+y_probn1
+acc_n1<- Accuracy(y_pred=y_probn1, y_true=train1$Pobre)
+acc_n1
+#0.799806
+
+modelo2n <- train(Ingtotug ~ valor_arriendo*Tot_personas + valor_arriendo + arriendo_tamano,
+                  data= train1,
+                  method = "glm")
+
+y_hatn2<- predict(modelo2n, train1)
+y_probn2 <- as.numeric(y_hatn2 < 289878.2)
+acc_n2<- Accuracy(y_pred=y_probn2, y_true=train1$Pobre)
+acc_n2
+#0.7997696
+
+modelo3n <- train(Ingtotug ~ arriendo_tamano + valor_arriendo,
+                  data= train1,
+                  method = "glm")
+
+y_hatn3<- predict(modelo3n, train1)
+y_probn3 <- as.numeric(y_hatn3 < 289878.2)
+acc_n3<- Accuracy(y_pred=y_probn3, y_true=train1$Pobre)
+acc_n3
+#0.7998
+
+modelo4n <- train(Ingtotug ~ Tot_personas + valor_arriendo + cuartos_pc,
+                  data= train1,
+                  method = "glm")
+
+y_hatn4<- predict(modelo4n, train1)
+y_probn4 <- as.numeric(y_hatn4 < 289878.2)
+acc_n4<- Accuracy(y_pred=y_probn4, y_true=train1$Pobre)
+acc_n4
+#0.799806
+
 
 
