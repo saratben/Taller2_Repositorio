@@ -29,7 +29,7 @@ modelo1 <- lm(Ingtotug ~ valor_arriendo + Tot_personas, data= train1)
 modelo2 <-  lm(Ingtotug ~ valor_arriendo*Tot_personas + valor_arriendo, data= train1)
 modelo3 <-  lm(Ingtotug ~ valor_arriendo*Tot_personas + valor_arriendo + arriendo_tamano, data= train1)
 modelo4 <-  lm(Ingtotug ~  valor_arriendo + arriendo_tamano, data= train1)
-stargazer( modelo1, modelo2, modelo3, modelo4, modelo5, type="text")
+stargazer( modelo1, modelo2, modelo3, modelo4,  type="text")
 
 
 #Para ver que tan desbalanceada está el training set (la muestra con la que vamos a entrenar el modelo)
@@ -250,5 +250,29 @@ acc_l1<- Accuracy(y_pred=y_probl1, y_true=train1$Pobre)
 acc_l1
 #0.7998
 
+#ELEGIMOS DOS MODELOS DE REGRESIÓN PARA KAGGLE
 
+#MODELO LASSO
+x1<- data.matrix(test1[, c("valor_arriendo", "Tot_personas", "arriendo_tamano", "cuartos_pc")])
+
+#predecimos 
+pred_i1<-predict(mod1lassobest,newdata = test1, newx=x1)
+head(pred_i1)
+prob_1<- as.numeric(pred_i1<289878.2)
+prob_1
+head(prob_1)
+prediccion_in1 <- data.frame('id' = test1$id, 'Pobre' = prob_1)
+prediccion_in1<- prediccion_in1%>% mutate( Pobre = ifelse("Pobre"==1,1,0))
+prediccion_in1<-prediccion_in1[,-2]
+write.csv(prediccion_in1, 'prediccionesindirectaa1.csv',row.names=FALSE)
+
+#MODELO RIDGE
+pred_i2<-predict(mod1ridgebest,newdata = test1, newx=x1)
+head(pred_i2)
+prob_2<- as.numeric(pred_i2<289878.2)
+prob_2
+head(prob_2)
+prediccion_in2 <- data.frame('id' = test1$id, 'Pobre' = prob_1)
+prediccion_in2<- prediccion_in2%>% mutate( Pobre = ifelse("Pobre"==1,1,0))
+write.csv(prediccion_in2, 'regression_a2.csv',row.names=FALSE)
 
