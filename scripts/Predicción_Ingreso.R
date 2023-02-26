@@ -14,19 +14,21 @@ train1 <- train1 %>% mutate(valor_arriendo = P5130+P5140)
 #train3 <- train3 %>% mutate(valor_arriendo = P5130+P5140)
 
 #Planteamos diferentes modelos de regresión para predecir el salario
-train1 <- train1 %>% mutate(Ingtotug = Ingtotug+1)
+
+#Creamos las variables necesarias
+
+#Cuartos per cápita
 train1 <- train1 %>% mutate(cuartos_pc = Cuartos/Tot_personas)
+#Valor de arriendo entre el número de cuartos
 train1 <- train1 %>% mutate(arriendo_tamano = valor_arriendo/Cuartos)
-#train1 <- train1 %>% mutate(log_ingreso = log10(Ingtotug))
 
 test1 <- test1 %>% mutate(cuartos_pc = Cuartos/Tot_personas)
 test1 <- test1 %>% mutate(arriendo_tamano = valor_arriendo/Cuartos)
 
 modelo1 <- lm(Ingtotug ~ valor_arriendo + Tot_personas, data= train1)
 modelo2 <-  lm(Ingtotug ~ valor_arriendo*Tot_personas + valor_arriendo, data= train1)
-modelo3 <-  lm(Ingtotug ~ valor_arriendo*Tot_personas + valor_arriendo + cuartos_pc, data= train1)
-modelo4 <-  lm(Ingtotug ~ valor_arriendo*Tot_personas + valor_arriendo + arriendo_tamano, data= train1)
-modelo5 <-  lm(Ingtotug ~  valor_arriendo + arriendo_tamano, data= train1)
+modelo3 <-  lm(Ingtotug ~ valor_arriendo*Tot_personas + valor_arriendo + arriendo_tamano, data= train1)
+modelo4 <-  lm(Ingtotug ~  valor_arriendo + arriendo_tamano, data= train1)
 stargazer( modelo1, modelo2, modelo3, modelo4, modelo5, type="text")
 
 
@@ -147,5 +149,106 @@ y_probd4 <- as.numeric(y_hatd4 < 289878.2)
 acc_d4<- Accuracy(y_pred=y_probd4, y_true=train1_d$Pobre)
 acc_d4
 # 0.5
+
+#MODELOS DE PRUEBA SIN REMUESTREO
+modelo1n <- train(Ingtotug ~ valor_arriendo + Tot_personas,
+                  data= train1,
+                  method = "glm")
+y_hatn1<- predict(modelo1n, train1)
+y_probn1 <- as.numeric(y_hatn1 < 289878.2)
+y_probn1
+acc_n1<- Accuracy(y_pred=y_probn1, y_true=train1$Pobre)
+acc_n1
+#0.799806
+
+modelo2n <- train(Ingtotug ~ valor_arriendo*Tot_personas + valor_arriendo + arriendo_tamano,
+                  data= train1,
+                  method = "glm")
+
+y_hatn2<- predict(modelo2n, train1)
+y_probn2 <- as.numeric(y_hatn2 < 289878.2)
+acc_n2<- Accuracy(y_pred=y_probn2, y_true=train1$Pobre)
+acc_n2
+#0.7997696
+
+
+modelo3n <- train(Ingtotug ~ arriendo_tamano + valor_arriendo,
+                  data= train1,
+                  method = "glm")
+
+y_hatn3<- predict(modelo3n, train1)
+y_probn3 <- as.numeric(y_hatn3 < 289878.2)
+acc_n3<- Accuracy(y_pred=y_probn3, y_true=train1$Pobre)
+acc_n3
+#0.7998
+
+modelo4n <- train(Ingtotug ~ Tot_personas + valor_arriendo + cuartos_pc,
+                  data= train1,
+                  method = "glm")
+
+y_hatn4<- predict(modelo4n, train1)
+y_probn4 <- as.numeric(y_hatn4 < 289878.2)
+acc_n4<- Accuracy(y_pred=y_probn4, y_true=train1$Pobre)
+acc_n4
+#0.799806
+
+#MODELO CON RIDGE
+
+y<- train1$Ingtotug
+x <- data.matrix(train1[, c("valor_arriendo", "Tot_personas", "arriendo_tamano", "cuartos_pc")])
+library(glmnet)
+mod1ridge <- glmnet(x,y, alpha=0)
+
+#k-fold cross validation 
+cv_mod <- cv.glmnet(x,y, alpha=0)
+mejor_lambda <- cv_mod$lambda.min
+mejor_lambda
+#49277.18
+plot(cv_mod)
+
+mod1ridgebest <- glmnet(x, y, alpha=0, lambda=mejor_lambda)
+y_hatr1<- predict(mod1ridgebest, s=mejor_lambda, newx= x)
+y_probr1 <- as.numeric(y_hatr1 < 289878.2)
+acc_r1<- Accuracy(y_pred=y_probr1, y_true=train1$Pobre)
+acc_r1
+#0.7998
+
+#MODELO CON RIDGE Y OVERSAMPLING
+yup<- train1_up$Ingtotug
+xup <- data.matrix(train1_up[, c("valor_arriendo", "Tot_personas", "arriendo_tamano", "cuartos_pc")])
+
+mod2ridge <- glmnet(xup,yup, alpha=0)
+
+#k-fold cross validation 
+cv_mod <- cv.glmnet(xup,yup, alpha=0)
+mejor_lambdaup <- cv_mod$lambda.min
+mejor_lambdaup
+#18009.26
+
+mod2ridgebest <- glmnet(xup, yup, alpha=0, lambda=mejor_lambdaup)
+y_hatr2<- predict(mod2ridgebest, s=mejor_lambdaup, newx= xup)
+y_probr2 <- as.numeric(y_hatr2 < 289878.2)
+acc_r2<- Accuracy(y_pred=y_probr2, y_true=train1_up$Pobre)
+acc_r2
+# 0.5000303
+
+#MODELO LASSO 
+y<- train1$Ingtotug
+x <- data.matrix(train1[, c("valor_arriendo", "Tot_personas", "arriendo_tamano", "cuartos_pc")])
+mod1lasso <- glmnet(x,y, alpha=1)
+
+#k-fold cross validation 
+cv_mod <- cv.glmnet(x,y, alpha=1)
+mejor_lambdal <- cv_mod$lambda.min
+mejor_lambdal
+#4285.878
+
+mod1lassobest <- glmnet(x, y, alpha=1, lambda=mejor_lambdal)
+y_hatl1<- predict(mod1lassobest, s=mejor_lambdal, newx= x)
+y_probl1 <- as.numeric(y_hatl1 < 289878.2)
+acc_l1<- Accuracy(y_pred=y_probl1, y_true=train1$Pobre)
+acc_l1
+#0.7998
+
 
 
