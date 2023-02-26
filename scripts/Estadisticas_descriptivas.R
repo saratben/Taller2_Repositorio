@@ -23,3 +23,8 @@ ggplot(train2, aes(y=Pobre)) + geom_bar(aes(x = (..count..)/sum(..count..)),
   theme_bw()
 
 
+#Label variables 
+
+train2$Pobre <- factor(train2$Pobre,
+                       levels=c(0,1),
+                       labels= c("no", "si"))
