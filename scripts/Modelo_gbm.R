@@ -25,6 +25,6 @@ summary(gbm_pred$Pobre)
 gbm_pred<- gbm_pred %>%  mutate(Pobre= ifelse( Si>No,1,0))
 
 ##guardamos la base con los predichos
-Pred_gbm<- data.frame('id' = test2$id, 'Probre' = gbm_pred)
+Pred_gbm<- data.frame('id' = test2$id, 'Pobre' = gbm_pred)
 Pred_gbm<- Pred_gbm[,-c(2,3)]
 write.csv(Pred_gbm, 'Pred_gbm.csv')

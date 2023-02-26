@@ -44,7 +44,9 @@ summary(RF_pred2)
 
 
 #guardamos la base con los predichos
-Pred_RF_sencillo <- data.frame('id' = test2$id, 'Probre' = RF_pred2)
-write.csv(Pred_RF_sencillo, 'Pred_RF_sencillo.csv')
+Pred_RF_sencillo <- data.frame('id' = test2$id, 'Pobre' = RF_pred2)
+Pred_RF_sencillo2<- Pred_RF_sencillo%>% mutate( Pobre = ifelse(Pobre=="Si",1,0))
+Pred_RF_sencillo2<-Pred_RF_sencillo2[,-2]
+write.csv(Pred_RF_sencillo2, 'Pred_RF_sencillo.csv')
 
 
