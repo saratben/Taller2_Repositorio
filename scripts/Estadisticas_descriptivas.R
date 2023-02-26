@@ -17,14 +17,18 @@ ggplot(train2, aes(x = Ingtot_hogar)) +
 
 #Gráfico de la distribución de pobreza 
 
+#Label variables 
+
+train2$Pobre <- factor(train2$Pobre,
+                       levels=c(0,1),
+                       labels= c("no", "si"))
+
+
 ggplot(train2, aes(y=Pobre)) + geom_bar(aes(x = (..count..)/sum(..count..)),
   fill = "darkblue") + labs(title ="Distribución de la variable de Pobreza del Hogar", x = "Proporción (%)") +
   scale_x_continuous(labels = scales::percent) +
   theme_bw()
 
 
-#Label variables 
 
-train2$Pobre <- factor(train2$Pobre,
-                       levels=c(0,1),
-                       labels= c("no", "si"))
+
