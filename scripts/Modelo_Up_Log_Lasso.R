@@ -42,4 +42,5 @@ logit_lasso_upsample_predict<- logit_lasso_upsample_predict %>%  mutate(Pobre= i
 ##guardamos la base con los predichos
 Pred_Up_Log_lass<- data.frame('id' = test2$id, 'Pobre' = logit_lasso_upsample_predict)
 Pred_Up_Log_lass<- Pred_Up_Log_lass[,-c(2,3)]
+colnames(Pred_Up_Log_lass)[2]<-"Pobre"
 write.csv(Pred_Up_Log_lass, 'Pred_Up_Log_lass.csv',row.names=FALSE)
