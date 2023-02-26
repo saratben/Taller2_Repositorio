@@ -9,7 +9,6 @@ sumtable(train2)
 
 #Gráfica de distribución del ingreso (en pesos colombianos)
 
-
 ggplot(train2, aes(x = Ingtot_hogar)) +
   geom_histogram(fill = "darkblue") +
   theme_bw() +
@@ -29,6 +28,19 @@ ggplot(train2, aes(y=Pobre)) + geom_bar(aes(x = (..count..)/sum(..count..)),
   scale_x_continuous(labels = scales::percent) +
   theme_bw()
 
+##Uniendo las dos gráficas en una sola
+
+g1<- ggplot(train2, aes(x = Ingtot_hogar)) +
+  geom_histogram(fill = "darkblue") +
+  theme_bw() +
+  labs(x = "Ingreso total por hogar (COP)", y = "Cantidad", title="Distribución del Ingreso Total")
 
 
+g2<- ggplot(train2, aes(y=Pobre)) + geom_bar(aes(x = (..count..)/sum(..count..)),
+                                        fill = "skyblue") + labs(title ="Distribución de Pobreza", x = "Proporción (%)") +
+  scale_x_continuous(labels = scales::percent) +
+  theme_bw()
+
+
+grid.arrange(g1, g2, ncol = 2)
 
