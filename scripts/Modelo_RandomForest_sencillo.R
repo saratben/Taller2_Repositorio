@@ -38,15 +38,16 @@ forest <- train(Pobre ~ Educacion_hogar+Salud_hogar+Hrs_trabajo_hogar,
 
 forest
 #predecimos 
-RF_pred2<-predict(forest,newdata = test2)
+RF_pred<-predict(forest,newdata = test2)
 head(RF_pred)
-summary(RF_pred2)
+summary(RF_pred)
 
 
 #guardamos la base con los predichos
-Pred_RF_sencillo <- data.frame('id' = test2$id, 'Pobre' = RF_pred2)
-Pred_RF_sencillo2<- Pred_RF_sencillo%>% mutate( Pobre = ifelse(Pobre=="Si",1,0))
-Pred_RF_sencillo2<-Pred_RF_sencillo2[,-2]
-write.csv(Pred_RF_sencillo2, 'Pred_RF_sencillo.csv')
+Pred_RF_sencillo <- data.frame('id' = test2$id, 'Pobre' = RF_pred)
+Pred_RF_sencillo<- Pred_RF_sencillo%>% mutate( Pobre = ifelse(Pobre=="Si",1,0))
+Pred_RF_sencillo<-Pred_RF_sencillo[,-2]
+write.csv(Pred_RF_sencillo, 'Pred_RF_sencillo.csv',row.names=FALSE)
+
 
 
