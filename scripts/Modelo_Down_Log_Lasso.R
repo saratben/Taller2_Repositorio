@@ -1,9 +1,8 @@
-
-### Predecir con un Upsample-Logit-lasso.
+### Predecir con un Downsample-Logit_lasso
 
 #cargamos los paquetes 
 require("pacman")
-p_load(tidyverse,caret, )
+p_load(tidyverse,caret) 
 
 #creamos los parametros 
 lambda_grid <- 10^seq(-4, 0.01, length = 300)
@@ -16,15 +15,19 @@ ctrl<- trainControl(method = "cv",
                     verbose=FALSE,
                     savePredictions = T)
 
-#Creamos el Upsample
-upSampledTrain <- upSample(x = train2,
+#ponemos la variable a predecir como factor
+#ponemos la variable a predecir como factor
+train2<-train2 %>% mutate(Pobre=factor(Pobre,levels=c(0,1),labels=c("No","Si")))            
+summary(train2$Pobre)
+#Creamos el downsample
+downsampleTrain <- downSample(x = train2,
                            y = train2$Pobre,
                            ## keep the class variable name the same:
                            yname = "Pobre")
 
 #Corremos el modelo 
-logit_lasso_upsample <- train(Pobre ~ Educacion_hogar+Salud_hogar+Hrs_trabajo_hogar,
-                              data = upSampledTrain, 
+logit_lasso_down <- train(Pobre ~ Educacion_hogar+Salud_hogar+Hrs_trabajo_hogar,
+                              data = downsampleTrain, 
                               method = "glmnet",
                               trControl = ctrl,
                               family = "binomial", 
@@ -32,16 +35,16 @@ logit_lasso_upsample <- train(Pobre ~ Educacion_hogar+Salud_hogar+Hrs_trabajo_ho
                               tuneGrid = expand.grid(alpha = 0,lambda=lambda_grid), 
                               preProcess = c("center", "scale")
 )
-logit_lasso_upsample
+logit_lasso_down
 
 #Hacemos la predicción y arreglamos 
-logit_lasso_upsample_predict<-predict(logit_lasso_upsample, newdata = test2, type = "prob")
-head(logit_lasso_upsample_predict)
-summary(logit_lasso_upsample_predict)
-logit_lasso_upsample_predict<- logit_lasso_upsample_predict %>%  mutate(Pobre= ifelse( Si>No,1,0))
+logit_lasso_downsample_predict<-predict(logit_lasso_down, newdata = test2, type = "prob")
+head(logit_lasso_downsample_predict)
+summary(logit_lasso_downsample_predict)
+logit_lasso_downsample_predict<- logit_lasso_downsample_predict %>%  mutate(Pobre= ifelse( Si>No,1,0))
 
 ##guardamos la base con los predichos
-Pred_Up_Log_lass<- data.frame('id' = test2$id, 'Pobre' = logit_lasso_upsample_predict)
-Pred_Up_Log_lass<- Pred_Up_Log_lass[,-c(2,3)]
-colnames(Pred_Up_Log_lass)[2]<-"Pobre"
-write.csv(Pred_Up_Log_lass, 'Pred_Up_Log_lass.csv',row.names=FALSE)
+Pred_Down_Log_lass<- data.frame('id' = test2$id, 'Pobre' = logit_lasso_downsample_predict)
+Pred_Down_Log_lass<- Pred_Down_Log_lass[,-c(2,3)]
+colnames(Pred_Down_Log_lass)[2]<-"Pobre"
+write.csv(Pred_Down_Log_lass, 'Pred_Down_Log_lass.csv',row.names=FALSE)
