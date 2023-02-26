@@ -9,7 +9,27 @@ sumtable(train2)
 
 #Gráfica de distribución del ingreso (en pesos colombianos)
 
+
+ggplot(train2, aes(x = Ingtot_hogar)) +
+  geom_histogram(fill = "darkblue") +
+  theme_bw() +
+  labs(x = "Ingreso total del hogar (COP)", y = "Cantidad")
+
+
+
+
 ##MANUALMNETE 
+
+p2 <- ggplot(train2, aes(y = .data[["Pobre"]])) +
+  geom_bar(aes(x = (..count..)/sum(..count..)),
+           fill = "darkblue") +
+  labs(title = paste("Distribución de la variable pobreza"),
+       x = "Proporción (%)") +
+  scale_x_continuous(labels = scales::percent) +
+  theme_bw()
+
+p2
+
 
 tot_pobres <-transform(train2, count(train2$Pobres)) 
   
