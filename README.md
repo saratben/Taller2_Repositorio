@@ -17,7 +17,7 @@ La cual, se encontraba dividida en cuatro sub bases de entrenamiento y de prueba
 
 El repositorio cuenta con 4 partes:
 
-documentos: El lugar dónde está el archivo .pdf del taller con todos los puntos del trabajo.
+document: El lugar dónde está el archivo .pdf del taller con todos los puntos del trabajo.
 
 scripts: Dónde están las programaciones en RStudio de todos los puntos del trabajo.
 
