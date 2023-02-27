@@ -20,7 +20,7 @@ gbm<-train(Pobre ~ Educacion_hogar+Salud_hogar+Hrs_trabajo_hogar,
 
 #Hacemos la predicción y arreglamos 
 gbm_pred<-predict(gbm,newdata = test2, type ="prob")
-head(RF_pred)
+head(gbm_pred)
 summary(gbm_pred$Pobre)
 gbm_pred<- gbm_pred %>%  mutate(Pobre= ifelse( Si>No,1,0))
 
