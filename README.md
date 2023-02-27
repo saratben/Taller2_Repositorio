@@ -1,18 +1,26 @@
-# Problem Set Template Repository for Big Data and Machine Learning for Applied Economics
+#Taller 2 Big Data y Machine Learning. 
 
-This is the template repository for the problem sets.
+Este es el repositorio del taller 2 del curso Big Data y Machine Learning.
+El objetivo de este taller es analizar y predecir la pobreza de los hogares, basado en la medida de "Accuracy", a partir de dos enfoques diferentes: predecir la pobreza a través de un modelo de clasificación y a través de predecir los ingresos de cada hogar
 
-The repo should contain at least four folders:
+El taller está construido en el lenguaje de programación de R, el cual es un lenguaje para 
+análisis estadístico y grafico de libre acceso 
+"https://www.r-project.org/"
 
-- `document`: contains your final document in `pdf` format. Ideally, the document should pull figures and tables directly from the `views` folder. I've included a latex template I created for the Thesis Seminar. 
-- `scripts`: contains all your scripts
-- `stores`: contains all the data sets used. If files are "too big" for GitHub, include a document describing where people can access the data.
-- `views`: contains all figures and tables
+Para poder utilizar el software, se requiere la aplicación de RStudio la cual facilita un entorno de 
+desarrollo para poder utilizar el lenguaje de programación.
+"https://www.r-studio.com/"
 
+La base de datos utilizada es del DANE de la Gran Encuesta Integrada de Hogares (GEIH) de 2018, y la Encuesta Continua de Hogares (ECH). 
+La Base fue descargada de Kaggle, en donde se participó con los resultados de las predicciones encontradas. 
+La cual, se encontraba dividida en cuatro sub bases de entrenamiento y de prueba, a nivel de hogar y a nivel individual. 
 
+El repositorio cuenta con 4 partes:
 
-## Some general reminders: 
+document: El lugar dónde está el archivo .pdf del taller con todos los puntos del trabajo.
 
-- It is essential how you write up the document. Be sure to be organized and consistent in explaining your equations and findings. Make sure that there are no compilation errors.
-- Write understandable code, separating and commenting on each section. Coding, like in writing, style is critical for readability. If the code is well written, it should be self-contained. There is no need to write everything you did. I encourage you to follow the [tidyverse style guide](https://style.tidyverse.org/)
+scripts: Dónde están las programaciones en RStudio de todos los puntos del trabajo.
 
+stores: Lugar dónde estan las bases de datos utilizadas. 
+
+views: Contiene todas las gráficas y tablas utilizadas en el trabajo. 
