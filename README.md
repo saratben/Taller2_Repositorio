@@ -1,4 +1,4 @@
-##Taller 2 Big Data y Machine Learning. 
+#Taller 2 Big Data y Machine Learning. 
 
 Este es el repositorio del taller 2 del curso Big Data y Machine Learning.
 El objetivo de este taller es analizar y predecir la pobreza de los hogares, basado en la medida de "Accuracy", a partir de dos enfoques diferentes: predecir la pobreza a través de un modelo de clasificación y a través de predecir los ingresos de cada hogar
