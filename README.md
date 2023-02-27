@@ -23,4 +23,4 @@ scripts: Dónde están las programaciones en RStudio de todos los puntos del tra
 
 stores: Lugar dónde estan las bases de datos utilizadas. 
 
-Views: Contiene todas las gráficas y tablas utilizadas en el trabajo. 
+views: Contiene todas las gráficas y tablas utilizadas en el trabajo. 
